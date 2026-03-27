@@ -8,12 +8,41 @@ use App\Services\AiHealthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Throwable;
+use OpenApi\Annotations as OA;
 class AiHealthController extends ApiController
 {
     public function __construct(private readonly AiHealthService $aiHealthService)
     {
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/api/ai/health-advice",
+     *     @OA\Post(
+     *         tags={"AI"},
+     *         summary="Generer un conseil IA",
+     *         security={{"sanctum":{}}},
+     *         @OA\Response(
+     *             response=200,
+     *             description="Conseils generes",
+     *             @OA\JsonContent(
+     *                 type="object",
+     *                 @OA\Property(property="success", type="boolean", example=true),
+     *                 @OA\Property(property="message", type="string", example="Conseils generes"),
+     *                 @OA\Property(
+     *                     property="data",
+     *                     type="object",
+     *                     @OA\Property(property="advice", type="string", example="Reposez-vous et hydratez-vous."),
+     *                     @OA\Property(property="generated_at", type="string", format="date-time", example="2026-03-27T12:00:00Z")
+     *                 )
+     *             )
+     *         ),
+     *         @OA\Response(response=401, description="Non authentifie"),
+     *         @OA\Response(response=422, description="Aucun symptome recent a analyser"),
+     *         @OA\Response(response=502, description="Erreur IA")
+     *     )
+     * )
+     */
     public function generate(Request $request): JsonResponse
     {
         $symptoms = Symptom::where('user_id', $request->user()->id)
@@ -54,6 +83,31 @@ class AiHealthController extends ApiController
         ], 'Conseils generes');
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/api/ai/health-advice/history",
+     *     @OA\Get(
+     *         tags={"AI"},
+     *         summary="Historique des conseils IA",
+     *         security={{"sanctum":{}}},
+     *         @OA\Response(
+     *             response=200,
+     *             description="Historique des conseils IA",
+     *             @OA\JsonContent(
+     *                 type="object",
+     *                 @OA\Property(property="success", type="boolean", example=true),
+     *                 @OA\Property(property="message", type="string", example="Historique des conseils IA"),
+     *                 @OA\Property(
+     *                     property="data",
+     *                     type="array",
+     *                     @OA\Items(ref="#/components/schemas/AiAdvice")
+     *                 )
+     *             )
+     *         ),
+     *         @OA\Response(response=401, description="Non authentifie")
+     *     )
+     * )
+     */
     public function history(Request $request): JsonResponse
     {
         $history = AiAdvice::where('user_id', $request->user()->id)
