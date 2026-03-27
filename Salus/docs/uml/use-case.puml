@@ -1,0 +1,28 @@
+﻿@startuml
+left to right direction
+actor "Utilisateur" as User
+
+rectangle "Salus API" {
+  usecase "S'inscrire" as UC1
+  usecase "Se connecter" as UC2
+  usecase "Gerer symptomes" as UC3
+  usecase "Consulter historique sante" as UC4
+  usecase "Lister medecins" as UC5
+  usecase "Rechercher medecins" as UC6
+  usecase "Prendre rendez-vous" as UC7
+  usecase "Consulter rendez-vous" as UC8
+  usecase "Obtenir conseils IA" as UC9
+  usecase "Historique conseils IA" as UC10
+}
+
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+User --> UC6
+User --> UC7
+User --> UC8
+User --> UC9
+User --> UC10
+@enduml
